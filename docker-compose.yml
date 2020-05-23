@@ -1,0 +1,23 @@
+version: '3'
+services:
+  application:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "9998:8080"
+    volumes:
+      - .:/app
+      - /Users/cemkurtulus/Documents/firefly/account-keys:/app/credentials
+    env_file:
+      - .env
+    depends_on:
+      - cache
+    command: uvicorn main:app --host 0.0.0.0 --port 8080
+
+    cache:
+    restart: always
+    image: redis:4.0
+    ports:
+      - "6382:6379"
