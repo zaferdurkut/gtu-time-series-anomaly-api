@@ -1,9 +1,8 @@
-from src.infra.redis_adapter.cache_adapter import CacheAdapter
 from src.infra.config.redis_adapter_config import get_redis_client
 import redis
 
 
-class RedisAdapter(CacheAdapter):
+class RedisAdapter():
     def __init__(self):
         self.client = get_redis_client()
 
