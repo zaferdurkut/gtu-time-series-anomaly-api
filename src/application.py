@@ -15,6 +15,6 @@ def create_app():
                   )
 
     app.include_router(common_controller.router, prefix="/api/v1/common", tags=["common"])
-    app.include_router(jpl_controller.router, prefix="/api/v1/jpl", tags=["common"])
+    app.include_router(jpl_controller.router, prefix="/api/v1/jpl", tags=["jpl"])
 
     return app
