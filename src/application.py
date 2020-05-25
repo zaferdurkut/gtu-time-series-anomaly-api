@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException
 
-from src.api import common_controller
+from src.api import common_controller, jpl_controller
 
 
 def create_app():
@@ -15,5 +15,6 @@ def create_app():
                   )
 
     app.include_router(common_controller.router, prefix="/api/v1/common", tags=["common"])
+    app.include_router(jpl_controller.router, prefix="/api/v1/jpl", tags=["common"])
 
     return app
