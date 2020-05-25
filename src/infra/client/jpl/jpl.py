@@ -1,4 +1,6 @@
 import json
+
+import pandas as pd
 import requests
 from firefly_logger.log_provider import logger
 from requests import Response
@@ -6,7 +8,7 @@ from starlette import status
 from bs4 import BeautifulSoup
 
 from src.infra.client.jpl.dto.jpl_list_dto import JPLListResponseModel
-from src.infra.config.jpl_config import JPLUrls
+from src.infra.config.jpl_config import JPLUrls, columns
 from src.infra.config.redis_adapter_config import get_redis_client, DEFAULT_TTL_DURATION_IN_MINUTES
 from src.infra.redis_adapter.redis_adapter import RedisAdapter
 
@@ -24,9 +26,74 @@ class JPLClient:
         result = build_all_list_result(response)
 
         redis_client.set(key="get_all_list_from_jpl",
-                              value=json.dumps(result, default=dict), expires=DEFAULT_TTL_DURATION_IN_MINUTES)
+                         value=json.dumps(result, default=dict), expires=DEFAULT_TTL_DURATION_IN_MINUTES)
 
         return result
+
+    @staticmethod
+    def get_image(data_name: str) -> dict:
+
+        data_name = data_name.upper()
+
+        all_list = JPLClient.get_all_list()
+        data = [x["name"] for x in all_list if x["name"] == data_name]
+
+        if len(data) > 0:
+            name = data[0]
+        else:
+            return None
+
+        response = requests.get(JPLUrls.jpl_image_base + name + ".jpg")
+        result = build_get_image_result(response)
+
+        return result
+
+    @staticmethod
+    def get_data(data_name: str) -> dict:
+
+        data_name = data_name.upper()
+
+        all_list = JPLClient.get_all_list()
+        data = [x["href"] for x in all_list if x["name"] == data_name]
+
+        if len(data) > 0:
+            href = data[0]
+        else:
+            return None
+
+        response = requests.get(href)
+        result = build_get_data_result(response)
+
+        return result
+
+
+def build_get_data_result(response: Response):
+    if response.status_code == status.HTTP_200_OK:
+        try:
+            items = []
+            for index, row in enumerate(response.iter_lines()):
+                data = row.decode("utf-8").split()
+                item = dict(zip(columns, data))
+                items.append(item)
+
+            df = pd.DataFrame(items)
+            return df
+        except Exception as e:
+            print(e)
+            return pd.DataFrame(columns=columns)
+
+    else:
+        logger.error("JPL returns error: {}".format(response.text))
+        raise Exception(response.text)
+
+
+def build_get_image_result(response: Response):
+    if response.status_code == status.HTTP_200_OK:
+
+        return response.raw
+    else:
+        logger.error("JPL returns error: {}".format(response.text))
+        raise Exception(response.text)
 
 
 def build_all_list_result(response: Response) -> list:
@@ -38,7 +105,7 @@ def build_all_list_result(response: Response) -> list:
             try:
                 href = tag.get('href')
                 name, path = href.split(".")
-                result.append(JPLListResponseModel.to_model(name=name, href=JPLUrls.jpl_data_base + href))
+                result.append(JPLListResponseModel.to_model(name=name, href=JPLUrls.jpl_data_base + href).dict())
             except AttributeError as ae:
                 pass
             except ValueError as ve:
@@ -51,6 +118,6 @@ def build_all_list_result(response: Response) -> list:
 
 
 if __name__ == '__main__':
-    result = JPLClient.get_all_list()
+    result = JPLClient.get_data("ATW2")
 
     print(result)

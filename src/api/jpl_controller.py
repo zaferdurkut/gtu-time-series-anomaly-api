@@ -1,7 +1,13 @@
+import ast
+import json
 import os
-from fastapi import APIRouter
+import tempfile
+
+from fastapi import APIRouter, Response
+from starlette.responses import StreamingResponse, FileResponse
 
 from src.api.dto.jpl_all_list_dto import JPLAllListOutputModel
+from src.api.dto.jpl_data_dto import JPLDataOutputModel
 from src.infra.client.jpl.jpl import JPLClient
 
 router = APIRouter()
@@ -16,3 +22,30 @@ def get_all_items():
     """
     result = JPLClient.get_all_list()
     return JPLAllListOutputModel(items=result)
+
+@router.get("/base-data", response_model=JPLDataOutputModel, status_code=200)
+def get_base_data(data_name):
+    """
+    This method returns a list of all items from
+    https://sideshow.jpl.nasa.gov/pub/JPL_GPS_Timeseries/repro2018a/post/point/
+    @return: JPLDataOutputModel
+    """
+    result = JPLClient.get_data(data_name=data_name)
+    if result is not None:
+        results = result.to_dict(orient='records')
+        return JPLDataOutputModel(items=results)
+    else:
+        return JPLDataOutputModel(items=[])
+
+
+
+# @router.get("/data-graph", status_code=200)
+# def get_data_graph(data_name):
+#     """
+#     This method returns a list of all items from
+#     https://sideshow.jpl.nasa.gov/pub/JPL_GPS_Timeseries/repro2018a/post/point/
+#     @return: image
+#     """
+#     result = JPLClient.get_image(data_name)
+#
+#     return FileResponse(result, mimetype="image/jpg")
