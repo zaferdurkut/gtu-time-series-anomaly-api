@@ -26,8 +26,8 @@ def get_all_items():
 @router.get("/base-data", response_model=JPLDataOutputModel, status_code=200)
 def get_base_data(data_name):
     """
-    This method returns a list of all items from
-    https://sideshow.jpl.nasa.gov/pub/JPL_GPS_Timeseries/repro2018a/post/point/
+    This method returns a data of series jbl
+    https://sideshow.jpl.nasa.gov/pub/JPL_GPS_Timeseries/repro2018a/post/point/AB27.series
     @return: JPLDataOutputModel
     """
     result = JPLClient.get_data(data_name=data_name)
