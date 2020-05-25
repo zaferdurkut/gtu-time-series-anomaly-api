@@ -36,16 +36,3 @@ def get_base_data(data_name):
         return JPLDataOutputModel(items=results)
     else:
         return JPLDataOutputModel(items=[])
-
-
-
-# @router.get("/data-graph", status_code=200)
-# def get_data_graph(data_name):
-#     """
-#     This method returns a list of all items from
-#     https://sideshow.jpl.nasa.gov/pub/JPL_GPS_Timeseries/repro2018a/post/point/
-#     @return: image
-#     """
-#     result = JPLClient.get_image(data_name)
-#
-#     return FileResponse(result, mimetype="image/jpg")

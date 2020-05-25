@@ -53,6 +53,10 @@ class JPLClient:
 
         data_name = data_name.upper()
 
+        if redis_client.exist(key=f"jpl_data.{data_name}"):
+            result = json.loads(redis_client.get(key=f"jpl_data.{data_name}"))
+            return pd.DataFrame(result)
+
         all_list = JPLClient.get_all_list()
         data = [x["href"] for x in all_list if x["name"] == data_name]
 
@@ -63,6 +67,10 @@ class JPLClient:
 
         response = requests.get(href)
         result = build_get_data_result(response)
+
+        redis_client.set(key=f"jpl_data.{data_name}",
+                         value=json.dumps(result.to_dict(orient='records'), default=dict),
+                         expires=DEFAULT_TTL_DURATION_IN_MINUTES)
 
         return result
 
