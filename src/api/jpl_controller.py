@@ -45,12 +45,12 @@ def get_base_data(data_name):
 
 
 @router.get("/anomaly-data", response_model=GeneralAnomalyTotalModel, status_code=200)
-def get_base_data(data_name: str, window_range_by_day: int, sigma_count: int):
+def get_anomaly_data(data_name: str, window_range_by_day: int, sigma_count: int):
     """
     This method returns a data of analysis jbl results and a list of anomaly data
     https://sideshow.jpl.nasa.gov/pub/JPL_GPS_Timeseries/repro2018a/post/point/AB27.series
 
-    @param data_name: name of the jpl data \t
+    @param data_name: name of the jpl data and you can use one of all endpoint items \t
     @param window_range_by_day: time interval to look \t
     @param sigma_count: tolerance range for standart deviation \t
 
