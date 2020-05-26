@@ -6,8 +6,8 @@ import tempfile
 from fastapi import APIRouter, Response
 from starlette.responses import StreamingResponse, FileResponse
 
-from src.api.dto.jpl_all_list_dto import JPLAllListOutputModel
-from src.api.dto.jpl_data_dto import JPLDataOutputModel
+from src.api.dto.jpl_all_list_output_dto import JPLAllListOutputModel
+from src.api.dto.jpl_data_output_dto import JPLDataOutputModel
 from src.infra.client.jpl.jpl import JPLClient
 
 router = APIRouter()

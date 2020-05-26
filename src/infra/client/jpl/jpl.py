@@ -31,25 +31,7 @@ class JPLClient:
         return result
 
     @staticmethod
-    def get_image(data_name: str) -> dict:
-
-        data_name = data_name.upper()
-
-        all_list = JPLClient.get_all_list()
-        data = [x["name"] for x in all_list if x["name"] == data_name]
-
-        if len(data) > 0:
-            name = data[0]
-        else:
-            return None
-
-        response = requests.get(JPLUrls.jpl_image_base + name + ".jpg")
-        result = build_get_image_result(response)
-
-        return result
-
-    @staticmethod
-    def get_data(data_name: str) -> dict:
+    def get_data(data_name: str) -> pd.DataFrame:
 
         data_name = data_name.upper()
 
@@ -90,15 +72,6 @@ def build_get_data_result(response: Response):
             print(e)
             return pd.DataFrame(columns=columns)
 
-    else:
-        logger.error("JPL returns error: {}".format(response.text))
-        raise Exception(response.text)
-
-
-def build_get_image_result(response: Response):
-    if response.status_code == status.HTTP_200_OK:
-
-        return response.raw
     else:
         logger.error("JPL returns error: {}".format(response.text))
         raise Exception(response.text)
