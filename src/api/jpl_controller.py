@@ -44,9 +44,9 @@ def get_base_data(data_name):
 @router.get("/anomaly-data", response_model=GeneralAnomalyTotalModel, status_code=200)
 def get_base_data(data_name: str, window_range_by_day: int, sigma_count: int):
     """
-    This method returns a data of series jbl
+    This method returns a data of analysis jbl results and a list of anomaly data
     https://sideshow.jpl.nasa.gov/pub/JPL_GPS_Timeseries/repro2018a/post/point/AB27.series
-    @return: JPLDataOutputModel
+    @return: GeneralAnomalyTotalModel
     """
     result = JPLService(jpl_client=JPLClient).get_anomaly_data(data_name=data_name,
                                          window_range_by_day=window_range_by_day,
