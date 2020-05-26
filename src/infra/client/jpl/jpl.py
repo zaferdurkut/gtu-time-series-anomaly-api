@@ -2,7 +2,6 @@ import json
 
 import pandas as pd
 import requests
-from firefly_logger.log_provider import logger
 from requests import Response
 from starlette import status
 from bs4 import BeautifulSoup

@@ -10,11 +10,11 @@ services:
       - "9998:8080"
     volumes:
       - .:/app
-      - /Users/cemkurtulus/Documents/firefly/account-keys:/app/credentials
     env_file:
       - .env
     depends_on:
       - cache
+    # command: tail -f /dev/null
     command: uvicorn main:app --host 0.0.0.0 --port 8080
 
   cache:
